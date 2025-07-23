@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-Day Flip Countdown</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
+<style>
+  body {
+    font-family: 'Pretendard', sans-serif;
+    background: #f5f5f5;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  #dday-app {
+    max-width: 400px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+  }
+  h3 {
+    color: #000CFE;
+    margin-bottom: 10px;
+  }
+  input, button {
+    font-family: 'Pretendard', sans-serif;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+  
+  input[type="date"] {
+    background: #f8f9fa;
+    border: none;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  input[type="date"]:focus {
+    outline: none;
+    background: #e9ecef;
+  }
+  
+  button {
+    background: #000CFE;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-left: 8px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+  }
+  
+  button:hover {
+    background: #0009e6;
+  }
+
+  /* ✅ 심플한 카운트다운 카드 스타일 */
+  .flip-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  .flip {
+    width: 80px;
+    height: 100px;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+  }
+  .flip.days { 
+    background: linear-gradient(135deg, #000CFE, #1E3AFF);
+    box-shadow: 0 4px 15px rgba(0, 12, 254, 0.3);
+  }
+  .flip.hours { 
+    background: linear-gradient(135deg, #4A46FF, #6B5BFF);
+    box-shadow: 0 4px 15px rgba(74, 70, 255, 0.3);
+  }
+  .flip.minutes { 
+    background: linear-gradient(135deg, #7B68EE, #9B7FFF);
+    box-shadow: 0 4px 15px rgba(123, 104, 238, 0.3);
+  }
+
+  .label {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #555;
+  }
+</style>
+</head>
+<body>
+<div id="dday-app">
+  <h3>⏳ 마감일까지 남은 시간</h3>
+  <input type="date" id="targetDate">
+  <button id="setDate">설정</button>
+  
+  <div class="flip-container">
+    <div class="flip days" id="days">00</div>
+    <div class="flip hours" id="hours">00</div>
+    <div class="flip minutes" id="minutes">00</div>
+  </div>
+  <div style="display:flex; justify-content:center; gap:50px;">
+    <div class="label">DAYS</div>
+    <div class="label">HOURS</div>
+    <div class="label">MINUTES</div>
+  </div>
+</div>
+
+<script>
+let countdownTimer;
+
+function updateDisplay(elementId, newValue) {
+  const element = document.getElementById(elementId);
+  if (element.textContent !== newValue) {
+    element.textContent = newValue;
+  }
+}
+
+function startCountdown(targetDate) {
+  if (countdownTimer) clearInterval(countdownTimer);
+
+  function update() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    if (distance <= 0) {
+      clearInterval(countdownTimer);
+      ["days", "hours", "minutes"].forEach(id => updateDisplay(id, "00"));
+      return;
+    }
+
+    const days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, "0");
+    const hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, "0");
+    const minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0");
+
+    updateDisplay("days", days);
+    updateDisplay("hours", hours);
+    updateDisplay("minutes", minutes);
+  }
+
+  update();
+  countdownTimer = setInterval(update, 60000); // 1분마다 갱신
+}
+
+// ✅ 페이지 로드 시 내일 날짜로 기본 설정
+document.addEventListener('DOMContentLoaded', function() {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const dateString = tomorrow.toISOString().split('T')[0];
+  document.getElementById("targetDate").value = dateString;
+  
+  // 자동으로 카운트다운 시작
+  const targetDate = new Date(dateString + "T00:00:00").getTime();
+  startCountdown(targetDate);
+});
+
+document.getElementById("setDate").addEventListener("click", () => {
+  const selectedDate = document.getElementById("targetDate").value;
+  if (!selectedDate) {
+    alert("날짜를 선택해주세요!");
+    return;
+  }
+  const targetDate = new Date(selectedDate + "T00:00:00").getTime();
+  startCountdown(targetDate);
+});
+</script>
+</body>
+</html>
