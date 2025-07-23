@@ -8,7 +8,7 @@
 <style>
   body {
     font-family: 'Pretendard', sans-serif;
-    background: #FFFFFF; /* 바깥 배경 */
+    background: #FFFFFF; /* 바깥 배경 흰색 */
     text-align: center;
     margin: 0;
     padding: 0;
@@ -16,81 +16,80 @@
   #dday-app {
     max-width: 400px;
     margin: 20px auto;
-    background: #F5F5F5; /* 안쪽 박스 */
+    background: #F5F5F5; /* 안쪽 박스 회색 */
     padding: 20px;
     border-radius: 20px;
-    box-sizing: border-box;
   }
-  /* ✅ 수정 가능한 제목 */
   #titleDisplay {
     font-size: 18px;
     color: #000CFE;
-    margin: 5px 0 15px 0;
+    margin-bottom: 10px;
     font-weight: 500;
     outline: none;
     cursor: text;
   }
-  /* ✅ 카운트다운 박스 */
   .flip-container {
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 15px;
   }
   .flip {
     width: 80px;
-    height: 80px;
+    height: 100px;
     border-radius: 8px;
-    background: #F0F0F0; /* 안쪽 연회색 */
-    border: 2px solid #000CFE; /* 파란색 테두리 */
-    color: #000CFE; /* 파란 폰트 */
+    background: #F5F5F5;
+    border: 2px solid #000CFE;
+    color: #000CFE;
     font-weight: bold;
-    font-size: 28px;
+    font-size: 36px;
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  .label {
-    margin-top: 5px;
-    font-size: 12px;
-    color: #000CFE;
-    font-weight: 500;
-  }
-  /* ✅ 날짜 설정 */
-  .date-control {
-    margin-top: 15px;
+  .label-container {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
+    margin-top: 5px;
   }
-  input, button {
+  .label {
+    width: 80px;
+    text-align: center;
+    font-size: 12px;
+    color: #000CFE;
+  }
+  .date-control {
+    margin-top: 15px;
+  }
+  input[type="date"] {
     font-family: 'Pretendard', sans-serif;
     padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #000CFE;
     font-size: 14px;
-    border-radius: 8px;
-    border: 2px solid #000CFE;
-    background: #F0F0F0;
     color: #000CFE;
-    font-weight: 500;
-  }
-  input[type="date"]:focus {
-    outline: none;
-    background: #E9E9E9;
+    background: #FFFFFF;
   }
   button {
+    background: #000CFE;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    margin-left: 5px;
   }
   button:hover {
-    background: #E0E0E0;
+    background: #0009e6;
   }
 </style>
 </head>
 <body>
 <div id="dday-app">
-  <!-- ✅ 수정 가능한 제목 -->
-  <h3 id="titleDisplay" contenteditable="true">*제목을 입력해주세요.</h3>
-  
+  <h3 id="titleDisplay" contenteditable="true">✱ 제목을 입력해주세요.</h3>
+
   <div class="flip-container">
     <div class="flip" id="days">00</div>
     <div class="flip" id="hours">00</div>
@@ -101,18 +100,11 @@
     <div class="label">HOURS</div>
     <div class="label">MINUTES</div>
   </div>
-  
-<!-- ✅ 날짜 설정은 하단 -->
-<div class="date-control">
-  <input type="date" id="targetDate">
-  <button id="setDate">설정</button>
-</div>
 
-<!-- ✅ 라벨 (카운트다운 박스 아래 정렬) -->
-<div class="label-container">
-  <div class="label">DAYS</div>
-  <div class="label">HOURS</div>
-  <div class="label">MINUTES</div>
+  <div class="date-control">
+    <input type="date" id="targetDate">
+    <button id="setDate">설정</button>
+  </div>
 </div>
 
 <script>
@@ -148,10 +140,10 @@ function startCountdown(targetDate) {
   }
 
   update();
-  countdownTimer = setInterval(update, 1000); // ✅ 1초마다 갱신
+  countdownTimer = setInterval(update, 60000); // 1분마다 갱신
 }
 
-// ✅ 페이지 로드 시 내일 날짜로 기본 설정
+// ✅ 페이지 로드 시 기본값: 내일 날짜
 document.addEventListener('DOMContentLoaded', function() {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -162,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
   startCountdown(targetDate);
 });
 
+// ✅ 설정 버튼 클릭 시 새 날짜 반영
 document.getElementById("setDate").addEventListener("click", () => {
   const selectedDate = document.getElementById("targetDate").value;
   if (!selectedDate) {
